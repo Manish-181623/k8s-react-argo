@@ -48,6 +48,7 @@ jobs:
     # Step 6: Update deployment.yml with the new image tag
     - name: Update Deployment File
       run: |
+        ls
         sed -i "s|manish181623/tic-tac-toe:.*|manish181623/tic-tac-toe:${{ github.sha }}|" kubernetes/deployment.yml
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"

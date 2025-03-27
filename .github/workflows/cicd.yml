@@ -67,4 +67,4 @@ jobs:
         git commit -m "Update deployment.yml with new image tag: ${{ github.sha }}"
         git push origin master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        GITHUB_TOKEN: ${{ secrets.MY_PAT }} 

@@ -6,7 +6,7 @@ on:
       - master
     paths-ignore:
       - 'kubernetes/deployment.yml'  # Ignore changes to this file to prevent loops
-      - '.github/workflows/cicd.yml'
+      
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

@@ -6,7 +6,7 @@ on:
       - master
     paths-ignore:
       - 'kubernetes/deployment.yml'  # Ignore changes to this file to prevent loops
-      
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -16,13 +16,13 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Needed for git operations
+        token: ${{ secrets.MY_PAT }}  # Use a Personal Access Token (PAT) with write access
 
     # Step 2: Set up Node.js to build the React project
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18' # Use the Node.js version compatible with your project
+        node-version: '18'
 
     # Step 3: Install dependencies and build the React app
     - name: Install Dependencies
@@ -45,25 +45,38 @@ jobs:
       with:
         context: .
         push: true
-        tags: manish181623/tic-tac-toe:${{ github.sha }} # Use Git commit hash as the image tag
+        tags: manish181623/tic-tac-toe:${{ github.sha }}
 
-    # Step 6: Update deployment.yml with the new image tag
-    - name: Update Kubernetes Deployment
+    # Step 6: Update Kubernetes deployment file
+    - name: Update Kubernetes Deployment File
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+        DOCKER_REGISTRY: docker.io
+        DOCKER_REPO: manish181623/tic-tac-toe
       run: |
         # Define the new image with tag
-        NEW_IMAGE="manish181623/tic-tac-toe:${{ github.sha }}"
+        NEW_IMAGE="${DOCKER_REGISTRY}/${DOCKER_REPO}:${IMAGE_TAG}"
         
-        # Update the deployment file
-        sed -i "s|image: manish181623/tic-tac-toe:.*|image: ${NEW_IMAGE}|g" kubernetes/deployment.yml
+        # Update the deployment file directly
+        sed -i "s|image: .*|image: ${NEW_IMAGE}|g" kubernetes/deployment.yml
         
         # Verify the change
         echo "Updated deployment to use image: ${NEW_IMAGE}"
-        grep "image:" kubernetes/deployment.yml
+        grep -A 1 "image:" kubernetes/deployment.yml
 
+    # Step 7: Commit and push changes
     - name: Commit and Push Changes
       run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+
+        # Add the updated deployment file
         git add kubernetes/deployment.yml
-        git commit -m "Update deployment image to ${{ github.sha }} [skip ci]" || echo "No changes to commit"
-        git push origin master 
+
+        # Commit the changes with [skip ci] to avoid triggering another workflow
+        git commit -m "Update Kubernetes deployment with new image tag: ${{ github.sha }} [skip ci]" || echo "No changes to commit"
+
+        # Push changes to the master branch
+        git push origin master
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_PAT }}  # Use the same PAT for authentication

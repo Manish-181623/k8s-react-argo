@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: tic-tac-toe
-        image: manish181623/tic-tac-toe:latest # Initial placeholder, will be updated dynamically
+        image: docker.io/manish181623/tic-tac-toe:c57ca9875ed6e7e9268119b154ac06f45a2f0130
         # Image will be automatically updated by CI/CD pipeline
         imagePullPolicy: Always
         ports:

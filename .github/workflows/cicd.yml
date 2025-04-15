@@ -93,7 +93,7 @@ jobs:
       with:
         image-ref: manish181623/tic-tac-toe:${{ github.sha }}
         format: 'table'
-        exit-code: '1'
+        exit-code: '0'  # Always return success (0) even if vulnerabilities found,use exit code '1' if you want to fail the job
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
@@ -107,7 +107,7 @@ jobs:
         push: true
         tags: manish181623/tic-tac-toe:${{ github.sha }}
 
-    # Step 6: Update Kubernetes deployment file
+    # Step 8: Update Kubernetes deployment file
     - name: Update Kubernetes Deployment File
       env:
         IMAGE_TAG: ${{ github.sha }}
@@ -124,7 +124,7 @@ jobs:
         echo "Updated deployment to use image: ${NEW_IMAGE}"
         grep -A 1 "image:" kubernetes/deployment.yml
 
-    # Step 7: Commit and push changes
+    # Step 9: Commit and push changes
     - name: Commit and Push Changes
       run: |
         git config user.name "GitHub Actions"

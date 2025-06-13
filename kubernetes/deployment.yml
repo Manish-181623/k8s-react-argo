@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: tic-tac-toe
-        image: docker.io/manish181623/tic-tac-toe:0beadf5c3e975689be4ae2e8f152a8255071ad47
+        image: docker.io/manish181623/tic-tac-toe:null
         # Image will be automatically updated by CI/CD pipeline
         imagePullPolicy: Always
         ports:
